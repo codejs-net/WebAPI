@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using WebApi.Authorization;
-using WebApi.Models.Users;
+using WebApi.Models.Auth;
 using WebApi.Services;
 using WebApi.Services.Auth;
 
@@ -95,6 +95,7 @@ namespace WebApi.Controllers
             else
                 return HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
         }
+
 
     }
 }

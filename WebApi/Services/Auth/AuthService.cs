@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WebApi.App;
 using WebApi.Authorization;
 using WebApi.Entities;
-using WebApi.Models.Users;
+using WebApi.Models.Auth;
 using WebApi.Utilities;
 
 namespace WebApi.Services.Auth

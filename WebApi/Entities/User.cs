@@ -6,9 +6,7 @@ namespace WebApi.Entities
     public class User
     {
         public int Id { get; set; }
-        public string UserType { get; set; }
-        public int DetailId { get; set; }
-        public int RoleId { get; set; }
+        public int PersonId{ get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         [JsonIgnore]

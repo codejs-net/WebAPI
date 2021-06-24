@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Models.Users
+namespace WebApi.Models.Auth
 {
     public class AuthenticateRequest
     {
@@ -9,5 +9,8 @@ namespace WebApi.Models.Users
 
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        public string AppSecret { get; set; }
     }
 }

@@ -45,6 +45,7 @@ namespace WebApi
 
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
 
             //Adding Authentication
             services.AddAuthentication(options =>

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using WebApi.Entities;
 
-namespace WebApi.Models.Users
+namespace WebApi.Models.Auth
 {
     public class AuthenticateResponse
     {
