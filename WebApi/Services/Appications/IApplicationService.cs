@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Entities;
+using WebApi.Models.Applications;
 
 namespace WebApi.Services.Appications
 {
@@ -10,8 +11,9 @@ namespace WebApi.Services.Appications
     {
         Task<IEnumerable<Application>> GetApplications();
         Task<Application> GetApplication(int Id);
-        Task<Application> CreateApplication(Application Application);
-        Task<Application> UpdateApplication(Application Application);
+        Task<ApplicationResponse> CreateApplication(Application Application);
+        Task<ApplicationResponse> UpdateApplication(Application Application);
+        Task<ApplicationResponse> ChangeApplicationSecret(int Id);
         Task<Application> DeleteApplication(int Id);
     }
 }

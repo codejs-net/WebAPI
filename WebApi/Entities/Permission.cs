@@ -9,11 +9,15 @@ namespace WebApi.Entities
     public class Permission
     {
         public int Id { get; set; }
-        public int ApplicationId { get; set; }
+
         [ForeignKey("ApplicationId")]
+        public int ApplicationId { get; set; }
         public Application Application { get; set; }
+
         public string Action { get; set; }
         public string Permissions { get; set; }
+
+
 
     }
 }

@@ -146,12 +146,6 @@ namespace WebApi.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppRoles_Users_VerifidBy",
-                        column: x => x.VerifidBy,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -194,11 +188,6 @@ namespace WebApi.Migrations
                 name: "IX_AppRoles_UserId",
                 table: "AppRoles",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppRoles_VerifidBy",
-                table: "AppRoles",
-                column: "VerifidBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Permissions_ApplicationId",

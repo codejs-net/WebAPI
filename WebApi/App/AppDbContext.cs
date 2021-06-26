@@ -17,5 +17,10 @@ namespace WebApi.App
         public DbSet<AppRole> AppRoles { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<Role>().HasOne(b => b.Application).WithMany(a => a.Roles);
+        }
+
     }
 }

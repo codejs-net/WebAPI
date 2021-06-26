@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Entities;
 
-namespace WebApi.Models.Users
+namespace WebApi.Models.Applications
 {
-    public class UserResponse
-    {  
+    public class ApplicationResponse
+    {
         public bool Success { get; set; } = true;
         public string Message { get; set; } = null;
-        public User Data { get; set; }
+        public Application Data { get; set; }
     }
 }

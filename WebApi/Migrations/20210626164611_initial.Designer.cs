@@ -9,7 +9,7 @@ using WebApi.App;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210624185126_initial")]
+    [Migration("20210626164611_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,8 +47,6 @@ namespace WebApi.Migrations
                     b.HasIndex("RoleId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("VerifidBy");
 
                     b.ToTable("AppRoles");
                 });
@@ -196,19 +194,11 @@ namespace WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Entities.User", "VerifiedUserId")
-                        .WithMany()
-                        .HasForeignKey("VerifidBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Application");
 
                     b.Navigation("Role");
 
                     b.Navigation("User");
-
-                    b.Navigation("VerifiedUserId");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Permission", b =>

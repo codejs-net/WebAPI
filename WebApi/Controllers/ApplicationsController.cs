@@ -5,11 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Entities;
+using WebApi.Models.Applications;
 using WebApi.Services.Appications;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[Action]")]
     [ApiController]
     public class ApplicationsController : ControllerBase
     {
@@ -52,17 +53,21 @@ namespace WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Application>> CreateApplication(Application Application)
+        public async Task<ActionResult<Application>> CreateApplication(ApplicationRequest request)
         {
             try
             {
-                if (Application == null)
+                if (request == null)
                     return BadRequest();
-
-                var createdApplication = await _service.CreateApplication(Application);
+                var createdApplication = await _service.CreateApplication(new Application
+                {
+                    AppName_si = request.AppName_si,
+                    AppName_ta = request.AppName_ta,
+                    AppName_en = request.AppName_en,
+                });
 
                 return CreatedAtAction(nameof(GetApplication),
-                    new { id = createdApplication.Id }, createdApplication);
+                    new { id = createdApplication.Data.Id }, createdApplication.Data);
             }
             catch (Exception)
             {
@@ -72,19 +77,44 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Application>> UpdateApplication(int id, Application Application)
+        public async Task<ActionResult<Application>> UpdateApplication(int id, ApplicationRequest request)
         {
             try
             {
-                if (id != Application.Id)
-                    return BadRequest("Application ID mismatch");
+                if (request == null)
+                    return BadRequest();
 
-                var ApplicationToUpdate = await _service.GetApplication(id);
+                var updatedApplication = await _service.UpdateApplication(new Application
+                {
+                    Id=id,
+                    AppName_si = request.AppName_si,
+                    AppName_ta = request.AppName_ta,
+                    AppName_en = request.AppName_en,
+                });
+                if (!updatedApplication.Success)
+                {
+                    return BadRequest(new { message = updatedApplication.Message });
+                }
+                return updatedApplication.Data;
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error updating Application data");
+            }
+        }
 
-                if (ApplicationToUpdate == null)
-                    return NotFound($"Application with Id = {id} not found");
-
-                return await _service.UpdateApplication(Application);
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Application>> ChangeApplicationSecret(int id)
+        {
+            try
+            {
+                var updatedApplication = await _service.ChangeApplicationSecret(id);
+                if (!updatedApplication.Success)
+                {
+                    return BadRequest(new { message = updatedApplication.Message });
+                }
+                return updatedApplication.Data;
             }
             catch (Exception)
             {

@@ -46,8 +46,6 @@ namespace WebApi.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("VerifidBy");
-
                     b.ToTable("AppRoles");
                 });
 
@@ -194,19 +192,11 @@ namespace WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WebApi.Entities.User", "VerifiedUserId")
-                        .WithMany()
-                        .HasForeignKey("VerifidBy")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Application");
 
                     b.Navigation("Role");
 
                     b.Navigation("User");
-
-                    b.Navigation("VerifiedUserId");
                 });
 
             modelBuilder.Entity("WebApi.Entities.Permission", b =>

@@ -17,9 +17,11 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApi.App;
 using WebApi.Authorization;
-
 using WebApi.Services;
+using WebApi.Services.Appications;
+using WebApi.Services.AppRoles;
 using WebApi.Services.Auth;
+using WebApi.Services.Roles;
 using WebApi.Services.Users;
 
 namespace WebApi
@@ -46,6 +48,10 @@ namespace WebApi
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IApplicationService, ApplicationService>();
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IAppRoleService, AppRoleService>();
+
 
             //Adding Authentication
             services.AddAuthentication(options =>

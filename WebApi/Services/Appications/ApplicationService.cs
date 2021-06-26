@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.App;
 using WebApi.Entities;
+using WebApi.Models.Applications;
+using WebApi.Utilities;
 
 namespace WebApi.Services.Appications
 {
@@ -27,31 +29,57 @@ namespace WebApi.Services.Appications
                 .FirstOrDefaultAsync(e => e.Id == Id);
         }
 
-        public async Task<Application> CreateApplication(Application Application)
+        public async Task<ApplicationResponse> CreateApplication(Application Application)
         {
-            var result = await _context.Applications.AddAsync(Application);
+            ApplicationResponse response = new ApplicationResponse();
+            Application.AppSecret = await GenerateAppSecert();
+            await _context.Applications.AddAsync(Application);
             await _context.SaveChangesAsync();
-            return result.Entity;
+
+            response.Message = "Application Create Success";
+            response.Data = Application; 
+            return response;
         }
 
-        public async Task<Application> UpdateApplication(Application Application)
+        public async Task<ApplicationResponse> UpdateApplication(Application Application)
         {
-            var result = await _context.Applications
-                .FirstOrDefaultAsync(e => e.Id == Application.Id);
-
+            ApplicationResponse response = new ApplicationResponse();
+            var result = await _context.Applications.FirstOrDefaultAsync(e => e.Id == Application.Id);
             if (result != null)
             {
                 result.AppName_si = Application.AppName_si;
                 result.AppName_ta = Application.AppName_ta;
                 result.AppName_en = Application.AppName_en;
-                result.AppSecret = Application.AppSecret;
 
                 await _context.SaveChangesAsync();
-
-                return result;
+                response.Message = "Application Update Success";
+                response.Data = result; 
             }
+            else
+            {
+                response.Message = "Application Not Found";
+                response.Success = false;
+            }
+            return response;
+        }
 
-            return null;
+        public async Task<ApplicationResponse> ChangeApplicationSecret(int Id)
+        {
+            ApplicationResponse response = new ApplicationResponse();
+            var result = await _context.Applications.FirstOrDefaultAsync(e => e.Id == Id);
+            if (result != null)
+            {
+                result.AppSecret = await GenerateAppSecert();
+                await _context.SaveChangesAsync();
+                response.Message = "Application Secret Update Success";
+                response.Data = result;
+            }
+            else
+            {
+                response.Message = "Application Not Found";
+                response.Success = false;
+            }
+            return response;
         }
 
         public async Task<Application> DeleteApplication(int Id)
@@ -66,6 +94,28 @@ namespace WebApi.Services.Appications
             }
 
             return null;
+        }
+
+        public async Task<string> GenerateAppSecert()
+        {
+            string secret = Generate.RandomString(20);
+            bool exsit = true;
+            while (exsit == true)
+            {
+                if (await _context.Applications.AnyAsync(x => x.AppSecret == secret))
+                { secret = Generate.RandomString(20); }
+                else
+                {exsit = false;}
+            }
+            return secret;
+        }
+        public async Task<bool> UserExists(string username)
+        {
+            if (await _context.Users.AnyAsync(x => x.Username == username))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

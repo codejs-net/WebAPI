@@ -18,13 +18,22 @@ namespace WebApi.Services.Roles
         }
         public async Task<IEnumerable<Role>> GetRoles()
         {
-            return await _context.Roles.ToListAsync();
+            //var rolslist = await (from role in _context.Set<Role>()
+            //             join app in _context.Set<Application>() on role.ApplicationId equals app.Id select  ).ToListAsync();
+
+            return await _context.Roles
+                        .Include(i => i.Application)
+                        .ToListAsync();
+
         }
 
         public async Task<Role> GetRole(int Id)
         {
-            return await _context.Roles
-                .FirstOrDefaultAsync(e => e.Id == Id);
+            var role = await _context.Roles.FirstOrDefaultAsync(e => e.Id == Id);
+            var app = await _context.Applications.FirstOrDefaultAsync(e => e.Id == role.ApplicationId);
+            role.Application = app;
+            return role;
+            
         }
 
         public async Task<Role> CreateRole(Role Role)

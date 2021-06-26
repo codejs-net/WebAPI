@@ -3,18 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApi.Entities
+namespace WebApi.Models.Applications
 {
-    public class Application
+    public class ApplicationRequest
     {
-        public int Id { get; set; }
         public string AppName_si { get; set; }
         public string AppName_ta { get; set; }
         public string AppName_en { get; set; }
-        public string AppSecret { get; set; }
-        //public ICollection<Role> Roles { get; set; }
-
-
-
+        //public string AppSecret { get; set; }
     }
 }

@@ -41,11 +41,12 @@ namespace WebApi.Services.AppRoles
 
             if (result != null)
             {
-                result.ApplicationId = AppRole.ApplicationId;
-                result.RoleId = AppRole.RoleId;
-                result.UserId = AppRole.UserId;
-                result.Verify = AppRole.Verify;
-                result.VerifidBy = AppRole.VerifidBy;
+                _context.Entry(AppRole).State = EntityState.Modified;
+                //result.ApplicationId = AppRole.ApplicationId;
+                //result.RoleId = AppRole.RoleId;
+                //result.UserId = AppRole.UserId;
+                //result.Verify = AppRole.Verify;
+                //result.VerifidBy = AppRole.VerifidBy;
 
                 await _context.SaveChangesAsync();
 
