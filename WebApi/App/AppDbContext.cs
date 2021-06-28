@@ -11,6 +11,7 @@ namespace WebApi.App
 
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<UserDetail> UserDetails { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Permission> Permissions { get; set; }
@@ -19,7 +20,7 @@ namespace WebApi.App
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Role>().HasOne(b => b.Application).WithMany(a => a.Roles);
+            ////modelBuilder1.Entity<Role>().HasOne(b => b.Application).WithMany(a => a.Roles);
         }
 
     }

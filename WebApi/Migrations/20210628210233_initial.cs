@@ -25,21 +25,21 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserDetails",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    PersonId = table.Column<int>(type: "int", nullable: false),
-                    Username = table.Column<string>(type: "text", nullable: true),
+                    FullName = table.Column<string>(type: "text", nullable: true),
+                    Mobile = table.Column<int>(type: "int", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
-                    PasswordHash = table.Column<byte[]>(type: "varbinary(4000)", nullable: true),
-                    PasswordSalt = table.Column<byte[]>(type: "varbinary(4000)", nullable: true),
-                    Status = table.Column<string>(type: "text", nullable: true)
+                    IdCard = table.Column<string>(type: "text", nullable: true),
+                    BirthDay = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_UserDetails", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -87,28 +87,50 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshToken",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    Token = table.Column<string>(type: "text", nullable: true),
-                    Expires = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime", nullable: false),
-                    CreatedByIp = table.Column<string>(type: "text", nullable: true),
-                    Revoked = table.Column<DateTime>(type: "datetime", nullable: true),
-                    RevokedByIp = table.Column<string>(type: "text", nullable: true),
-                    ReplacedByToken = table.Column<string>(type: "text", nullable: true),
-                    ReasonRevoked = table.Column<string>(type: "text", nullable: true),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserDetailId = table.Column<int>(type: "int", nullable: false),
+                    Username = table.Column<string>(type: "text", nullable: true),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(4000)", nullable: true),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(4000)", nullable: true),
+                    Status = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RefreshToken_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Users_UserDetails_UserDetailId",
+                        column: x => x.UserDetailId,
+                        principalTable: "UserDetails",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RolePermissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RolePermissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RolePermissions_Permissions_PermissionId",
+                        column: x => x.PermissionId,
+                        principalTable: "Permissions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RolePermissions_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -149,27 +171,28 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RolePermissions",
+                name: "RefreshToken",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                    Token = table.Column<string>(type: "text", nullable: true),
+                    Expires = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime", nullable: false),
+                    CreatedByIp = table.Column<string>(type: "text", nullable: true),
+                    Revoked = table.Column<DateTime>(type: "datetime", nullable: true),
+                    RevokedByIp = table.Column<string>(type: "text", nullable: true),
+                    ReplacedByToken = table.Column<string>(type: "text", nullable: true),
+                    ReasonRevoked = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RolePermissions", x => x.Id);
+                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RolePermissions_Permissions_PermissionId",
-                        column: x => x.PermissionId,
-                        principalTable: "Permissions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RolePermissions_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
+                        name: "FK_RefreshToken_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -213,6 +236,11 @@ namespace WebApi.Migrations
                 name: "IX_Roles_ApplicationId",
                 table: "Roles",
                 column: "ApplicationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_UserDetailId",
+                table: "Users",
+                column: "UserDetailId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -234,6 +262,9 @@ namespace WebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "UserDetails");
 
             migrationBuilder.DropTable(
                 name: "Applications");

@@ -13,7 +13,7 @@ namespace WebApi.Entities
 
         [ForeignKey("ApplicationId")]
         public int ApplicationId { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public Application Application { get; set; }
 
         public string Role_si { get; set; }

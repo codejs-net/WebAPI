@@ -149,27 +149,55 @@ namespace WebApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
                     b.Property<byte[]>("PasswordHash")
                         .HasColumnType("varbinary(4000)");
 
                     b.Property<byte[]>("PasswordSalt")
                         .HasColumnType("varbinary(4000)");
 
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Status")
                         .HasColumnType("text");
+
+                    b.Property<int>("UserDetailId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserDetailId");
+
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("WebApi.Entities.UserDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("BirthDay")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdCard")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Mobile")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserDetails");
                 });
 
             modelBuilder.Entity("WebApi.Entities.AppRole", b =>
@@ -242,6 +270,12 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Entities.User", b =>
                 {
+                    b.HasOne("WebApi.Entities.UserDetail", "UserDetail")
+                        .WithMany()
+                        .HasForeignKey("UserDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.OwnsMany("WebApi.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
                             b1.Property<int>("Id")
@@ -286,6 +320,8 @@ namespace WebApi.Migrations
                         });
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserDetail");
                 });
 #pragma warning restore 612, 618
         }

@@ -22,7 +22,7 @@ namespace WebApi.Services.Roles
             //             join app in _context.Set<Application>() on role.ApplicationId equals app.Id select  ).ToListAsync();
 
             return await _context.Roles
-                        .Include(i => i.Application)
+                        //.Include(i => i.Application)
                         .ToListAsync();
 
         }

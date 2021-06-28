@@ -34,7 +34,7 @@ namespace WebApi.Controllers
                     "Error retrieving data from the database");
             }
         }
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Application>> GetApplication(int id)
         {
             try
@@ -123,7 +123,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<Application>> DeleteApplication(int id)
         {
             try

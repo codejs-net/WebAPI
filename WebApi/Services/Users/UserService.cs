@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using WebApi.App;
 using WebApi.Entities;
 using WebApi.Models.Users;
+using WebApi.Models.Validation;
 using WebApi.Utilities;
 
 namespace WebApi.Services.Users
@@ -19,9 +20,27 @@ namespace WebApi.Services.Users
         {
             _context = context;
         }
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<IEnumerable<UserGetResponse>> GetUsers(string AppSecrat)
         {
-            return await _context.Users.ToListAsync();
+            var responseList = new List<UserGetResponse>();
+            var app = await _context.Applications.FirstOrDefaultAsync(e => e.AppSecret == AppSecrat);
+           
+            var userlist = await _context.AppRoles
+                .Where(x => x.ApplicationId == app.Id)
+                .Include(i => i.Role)
+                .Include(i => i.User)
+                .ToListAsync();
+            foreach (var item in userlist)
+            {
+                var response = new UserGetResponse();
+                response.Id = item.User.Id;
+                response.Username = item.User.Username;
+                //response.Email = item.User.Email;
+                response.Role = item.Role;
+                responseList.Add(response);
+            }
+           
+            return responseList;
         }
 
         public async Task<User> GetUser(int Id)
@@ -30,25 +49,38 @@ namespace WebApi.Services.Users
                 .FirstOrDefaultAsync(e => e.Id == Id);
         }
 
-        public async Task<UserResponse> CreateUser(User User,string password)
+        public async Task<UserResponse> CreateUser(UserRequest request)
         {
-            UserResponse response = new UserResponse();
-            if (await UserExists(User.Username))
+            var response = new UserResponse();
+            var User = new User();
+            var UserDetail = new UserDetail();
+
+            response.Error = await ExistsValidetion(request);
+            if (response.Error.Count==0)
             {
-                response.Success = false;
-                response.Message = "User Allready Exists";
+                UserDetail.FullName = request.FullName;
+                UserDetail.Email = request.Email;
+                UserDetail.Mobile = request.Mobile;
+                UserDetail.IdCard = request.IdCard;
+                UserDetail.PersonId = request.PersonId;
+                await _context.UserDetails.AddAsync(UserDetail);
+                await _context.SaveChangesAsync();
+                //--------------------------
+                PasswordHash.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+                User.PasswordHash = passwordHash;
+                User.PasswordSalt = passwordSalt;
+                User.Username = request.Username;
+                User.UserDetailId = UserDetail.Id;
+                await _context.Users.AddAsync(User);
+                await _context.SaveChangesAsync();
+
+                response.Message = "User Create Success";
+                response.Data = User;
             }
             else
             {
-                PasswordHash.CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
-                User.PasswordHash = passwordHash;
-                User.PasswordSalt = passwordSalt;
-
-                await _context.Users.AddAsync(User);
-                await _context.SaveChangesAsync();
-                response.Message = "User Create Success";
-                response.Data = User;
-               
+                response.Success = false;
+                response.Message = "User Create Faild";
             }
             return response;
         }
@@ -61,8 +93,8 @@ namespace WebApi.Services.Users
             if (result != null)
             {
                 result.Username = User.Username;
-                result.Email = User.Email;
-                result.PersonId = User.PersonId;
+                //result.Email = User.Email;
+                //result.PersonId = User.PersonId;
                 result.Status = User.Status;
 
                 await _context.SaveChangesAsync();
@@ -94,6 +126,59 @@ namespace WebApi.Services.Users
                 return true;
             }
             return false;
+        }
+        public async Task<bool> EmailExists(string email)
+        {
+            if (await _context.UserDetails.AnyAsync(x => x.Email.ToLower() == email.ToLower()))
+            {
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> IdCardExists(string idCard)
+        {
+            if (await _context.UserDetails.AnyAsync(x => x.IdCard.ToLower() == idCard.ToLower()))
+            {
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> MobileExists(int mobile)
+        {
+            if (await _context.UserDetails.AnyAsync(x => x.Mobile == mobile))
+            {
+                return true;
+            }
+            return false;
+        }
+        public async Task<List<Error>> ExistsValidetion(UserRequest request)
+        {
+            var errorlist = new List<Error>();
+            if (await _context.Users.AnyAsync(x => x.Username == request.Username))
+            {
+                var error = new Error();
+                error.Name = "UserName";error.ErrorMessage = "UserName Allrady Exists";
+                errorlist.Add(error);
+            }
+            if (await _context.UserDetails.AnyAsync(x => x.Email == request.Email))
+            {
+                var error = new Error();
+                error.Name = "Email"; error.ErrorMessage = "Email Allrady Exists";
+                errorlist.Add(error);
+            }
+            if (await _context.UserDetails.AnyAsync(x => x.Mobile == request.Mobile))
+            {
+                var error = new Error();
+                error.Name = "Mobile"; error.ErrorMessage = "Mobile Allrady Exists";
+                errorlist.Add(error);
+            }
+            if (await _context.UserDetails.AnyAsync(x => x.IdCard == request.IdCard))
+            {
+                var error = new Error();
+                error.Name = "IdCard"; error.ErrorMessage = "Idintity Card No Allrady Exists";
+                errorlist.Add(error);
+            }
+            return errorlist;
         }
     }
 }

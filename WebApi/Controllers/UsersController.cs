@@ -23,12 +23,12 @@ namespace WebApi.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetUsers()
+        [HttpGet("{AppSecret}")]
+        public async Task<ActionResult> GetUsers(string AppSecret)
         {
             try
             {
-                return Ok(await _service.GetUsers());
+                return Ok(await _service.GetUsers(AppSecret));
             }
             catch (Exception)
             {
@@ -59,23 +59,14 @@ namespace WebApi.Controllers
         {
             try
             {
-                if (User == null)
-                    return BadRequest();
-                var createdUser = await _service.CreateUser(new User 
-                { 
-                  Username = request.Username, 
-                  Email = request.Email ,
-                  PersonId=request.PersonId,
-                  Status=request.Status
-                },
-                request.Password);
+                if (request == null)
+                return BadRequest(ModelState);
+                var createdUser = await _service.CreateUser(request);
                 if (!createdUser.Success)
                 {
-                    return BadRequest(new { message = createdUser.Message });
+                    return BadRequest(createdUser.Error);
                 }
                    return CreatedAtAction(nameof(GetUser), new { id = createdUser.Data.Id }, createdUser.Data);
-                
-               
             }
             catch (Exception)
             {

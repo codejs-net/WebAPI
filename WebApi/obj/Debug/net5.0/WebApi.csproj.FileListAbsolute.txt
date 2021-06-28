@@ -68,3 +68,4 @@ D:\Projects\DotNet Core\WEB API\WebApi\WebApi\obj\Debug\net5.0\WebApi.dll
 D:\Projects\DotNet Core\WEB API\WebApi\WebApi\obj\Debug\net5.0\ref\WebApi.dll
 D:\Projects\DotNet Core\WEB API\WebApi\WebApi\obj\Debug\net5.0\WebApi.pdb
 D:\Projects\DotNet Core\WEB API\WebApi\WebApi\obj\Debug\net5.0\WebApi.genruntimeconfig.cache
+D:\Projects\DotNet Core\WEB API\WebApi\WebApi\obj\Debug\net5.0\WebApi.csprojAssemblyReference.cache
