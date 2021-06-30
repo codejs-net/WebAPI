@@ -59,12 +59,7 @@ namespace WebApi.Controllers
             {
                 if (request == null)
                     return BadRequest();
-                var createdApplication = await _service.CreateApplication(new Application
-                {
-                    AppName_si = request.AppName_si,
-                    AppName_ta = request.AppName_ta,
-                    AppName_en = request.AppName_en,
-                });
+                var createdApplication = await _service.CreateApplication(request);
 
                 return CreatedAtAction(nameof(GetApplication),
                     new { id = createdApplication.Data.Id }, createdApplication.Data);
@@ -82,15 +77,9 @@ namespace WebApi.Controllers
             try
             {
                 if (request == null)
-                    return BadRequest();
+                { return BadRequest();}
 
-                var updatedApplication = await _service.UpdateApplication(new Application
-                {
-                    Id=id,
-                    AppName_si = request.AppName_si,
-                    AppName_ta = request.AppName_ta,
-                    AppName_en = request.AppName_en,
-                });
+                var updatedApplication = await _service.UpdateApplication(id,request);
                 if (!updatedApplication.Success)
                 {
                     return BadRequest(new { message = updatedApplication.Message });

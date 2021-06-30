@@ -11,8 +11,8 @@ namespace WebApi.Services.Appications
     {
         Task<IEnumerable<Application>> GetApplications();
         Task<Application> GetApplication(int Id);
-        Task<ApplicationResponse> CreateApplication(Application Application);
-        Task<ApplicationResponse> UpdateApplication(Application Application);
+        Task<ApplicationResponse> CreateApplication(ApplicationRequest request);
+        Task<ApplicationResponse> UpdateApplication(int id,ApplicationRequest request);
         Task<ApplicationResponse> ChangeApplicationSecret(int Id);
         Task<Application> DeleteApplication(int Id);
     }

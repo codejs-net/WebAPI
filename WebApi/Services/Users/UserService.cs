@@ -20,32 +20,10 @@ namespace WebApi.Services.Users
         {
             _context = context;
         }
-        public async Task<IEnumerable<UserGetResponse>> GetUsers(string AppSecrat)
-        {
-            var responseList = new List<UserGetResponse>();
-            var app = await _context.Applications.FirstOrDefaultAsync(e => e.AppSecret == AppSecrat);
-           
-            var userlist = await _context.AppRoles
-                .Where(x => x.ApplicationId == app.Id)
-                .Include(i => i.Role)
-                .Include(i => i.User)
-                .ToListAsync();
-            foreach (var item in userlist)
-            {
-                var response = new UserGetResponse();
-                response.Id = item.User.Id;
-                response.Username = item.User.Username;
-                //response.Email = item.User.Email;
-                response.Role = item.Role;
-                responseList.Add(response);
-            }
-           
-            return responseList;
-        }
-
         public async Task<User> GetUser(int Id)
         {
             return await _context.Users
+                .Include(i => i.UserDetail)
                 .FirstOrDefaultAsync(e => e.Id == Id);
         }
 
@@ -55,54 +33,55 @@ namespace WebApi.Services.Users
             var User = new User();
             var UserDetail = new UserDetail();
 
-            response.Error = await ExistsValidetion(request);
-            if (response.Error.Count==0)
-            {
-                UserDetail.FullName = request.FullName;
-                UserDetail.Email = request.Email;
-                UserDetail.Mobile = request.Mobile;
-                UserDetail.IdCard = request.IdCard;
-                UserDetail.PersonId = request.PersonId;
-                await _context.UserDetails.AddAsync(UserDetail);
-                await _context.SaveChangesAsync();
-                //--------------------------
-                PasswordHash.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-                User.PasswordHash = passwordHash;
-                User.PasswordSalt = passwordSalt;
-                User.Username = request.Username;
-                User.UserDetailId = UserDetail.Id;
-                await _context.Users.AddAsync(User);
-                await _context.SaveChangesAsync();
+            UserDetail.FullName = request.FullName;
+            UserDetail.Email = request.Email;
+            UserDetail.Mobile = request.Mobile;
+            UserDetail.IdCard = request.IdCard;
+            UserDetail.PersonId = request.PersonId;
+            await _context.UserDetails.AddAsync(UserDetail);
+            await _context.SaveChangesAsync();
+            //--------------------------
+            PasswordHash.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            User.PasswordHash = passwordHash;
+            User.PasswordSalt = passwordSalt;
+            User.Username = request.Username;
+            User.UserDetailId = UserDetail.Id;
+            await _context.Users.AddAsync(User);
+            await _context.SaveChangesAsync();
+            //---------------------------
 
-                response.Message = "User Create Success";
-                response.Data = User;
-            }
-            else
-            {
-                response.Success = false;
-                response.Message = "User Create Faild";
-            }
+            response.Message = "User Create Success";
+            response.Data = User;
             return response;
         }
 
-        public async Task<User> UpdateUser(User User)
+        public async Task<UserResponse> UpdateUser(UserRequest request,int userid)
         {
+            var response = new UserResponse();
+            //var User = new User();
+            //var UserDetail = new UserDetail();
+
             var result = await _context.Users
-                .FirstOrDefaultAsync(e => e.Id == User.Id);
+                .Include(i => i.UserDetail)
+                .FirstOrDefaultAsync(e => e.Id == userid);
 
             if (result != null)
             {
-                result.Username = User.Username;
-                //result.Email = User.Email;
-                //result.PersonId = User.PersonId;
-                result.Status = User.Status;
-
+                //result.Username = request.Username;
+                result.UserDetail.FullName = request.FullName;
+                result.UserDetail.IdCard = request.IdCard;
+                result.UserDetail.Email = request.Email;
+                result.UserDetail.Mobile = request.Mobile;
+                result.UserDetail.PersonId = request.PersonId;
+                result.Status = request.Status;
                 await _context.SaveChangesAsync();
 
-                return result;
+                response.Message = "User Update Success";
+                response.Data = result;
+               
             }
 
-            return null;
+            return response;
         }
 
         public async Task<User> DeleteUser(int Id)
@@ -143,7 +122,7 @@ namespace WebApi.Services.Users
             }
             return false;
         }
-        public async Task<bool> MobileExists(int mobile)
+        public async Task<bool> MobileExists(string mobile)
         {
             if (await _context.UserDetails.AnyAsync(x => x.Mobile == mobile))
             {
@@ -151,6 +130,8 @@ namespace WebApi.Services.Users
             }
             return false;
         }
+
+
         public async Task<List<Error>> ExistsValidetion(UserRequest request)
         {
             var errorlist = new List<Error>();

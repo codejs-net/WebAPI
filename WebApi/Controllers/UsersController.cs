@@ -13,7 +13,7 @@ namespace WebApi.Controllers
 {
     //[Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]/[Action]")]
     public class UsersController : ControllerBase
     {
         private IUserService _service;
@@ -23,19 +23,6 @@ namespace WebApi.Controllers
             _service = service;
         }
 
-        [HttpGet("{AppSecret}")]
-        public async Task<ActionResult> GetUsers(string AppSecret)
-        {
-            try
-            {
-                return Ok(await _service.GetUsers(AppSecret));
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error retrieving data from the database");
-            }
-        }
         [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -59,14 +46,23 @@ namespace WebApi.Controllers
         {
             try
             {
-                if (request == null)
-                return BadRequest(ModelState);
+                if (await _service.UserExists(request.Username))
+                {ModelState.AddModelError(nameof(UserRequest.Username),"UserName  Exists");}
+
+                if (await _service.EmailExists(request.Email))
+                { ModelState.AddModelError(nameof(UserRequest.Email), "Email Exists"); }
+
+                if (await _service.MobileExists(request.Mobile))
+                { ModelState.AddModelError(nameof(UserRequest.Mobile), "Mobile Exists"); }
+
+                if (await _service.IdCardExists(request.IdCard))
+                { ModelState.AddModelError(nameof(UserRequest.IdCard), "IdCard Exists"); }
+
+                if (!ModelState.IsValid)
+                { return BadRequest(ModelState);}  
+
                 var createdUser = await _service.CreateUser(request);
-                if (!createdUser.Success)
-                {
-                    return BadRequest(createdUser.Error);
-                }
-                   return CreatedAtAction(nameof(GetUser), new { id = createdUser.Data.Id }, createdUser.Data);
+                return CreatedAtAction(nameof(GetUser), new { id = createdUser.Data.Id }, createdUser.Data);
             }
             catch (Exception)
             {
@@ -76,19 +72,17 @@ namespace WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> UpdateUser(int id, User User)
+        public async Task<ActionResult<User>> UpdateUser(int id, UserRequest request)
         {
             try
             {
-                if (id != User.Id)
-                    return BadRequest("User ID mismatch");
-
                 var UserToUpdate = await _service.GetUser(id);
 
                 if (UserToUpdate == null)
                     return NotFound($"User with Id = {id} not found");
 
-                return await _service.UpdateUser(User);
+                var UpdatedUser=await _service.UpdateUser(request,id);
+                return UpdatedUser.Data;
             }
             catch (Exception)
             {
@@ -97,7 +91,7 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
             try
@@ -117,6 +111,7 @@ namespace WebApi.Controllers
                     "Error deleting data");
             }
         }
+
 
     }
 }

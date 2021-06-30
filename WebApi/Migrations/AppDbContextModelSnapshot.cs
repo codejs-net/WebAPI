@@ -17,38 +17,6 @@ namespace WebApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.7");
 
-            modelBuilder.Entity("WebApi.Entities.AppRole", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VerifidBy")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Verify")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AppRoles");
-                });
-
             modelBuilder.Entity("WebApi.Entities.Application", b =>
                 {
                     b.Property<int>("Id")
@@ -67,80 +35,36 @@ namespace WebApi.Migrations
                     b.Property<string>("AppSecret")
                         .HasColumnType("text");
 
+                    b.Property<string>("AppType")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Applications");
                 });
 
-            modelBuilder.Entity("WebApi.Entities.Permission", b =>
+            modelBuilder.Entity("WebApi.Entities.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("Action")
-                        .HasColumnType("text");
+                    b.Property<bool>("Activate")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Permissions")
-                        .HasColumnType("text");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationId");
 
-                    b.ToTable("Permissions");
-                });
+                    b.HasIndex("UserId");
 
-            modelBuilder.Entity("WebApi.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Level")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Role_en")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Role_si")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Role_ta")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationId");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.RolePermission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("PermissionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RolePermissions");
+                    b.ToTable("ApplicationUsers");
                 });
 
             modelBuilder.Entity("WebApi.Entities.User", b =>
@@ -189,8 +113,8 @@ namespace WebApi.Migrations
                     b.Property<string>("IdCard")
                         .HasColumnType("text");
 
-                    b.Property<int>("Mobile")
-                        .HasColumnType("int");
+                    b.Property<string>("Mobile")
+                        .HasColumnType("text");
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
@@ -200,17 +124,11 @@ namespace WebApi.Migrations
                     b.ToTable("UserDetails");
                 });
 
-            modelBuilder.Entity("WebApi.Entities.AppRole", b =>
+            modelBuilder.Entity("WebApi.Entities.ApplicationUser", b =>
                 {
                     b.HasOne("WebApi.Entities.Application", "Application")
                         .WithMany()
                         .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -222,50 +140,7 @@ namespace WebApi.Migrations
 
                     b.Navigation("Application");
 
-                    b.Navigation("Role");
-
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.Permission", b =>
-                {
-                    b.HasOne("WebApi.Entities.Application", "Application")
-                        .WithMany()
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Application");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.Role", b =>
-                {
-                    b.HasOne("WebApi.Entities.Application", "Application")
-                        .WithMany()
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Application");
-                });
-
-            modelBuilder.Entity("WebApi.Entities.RolePermission", b =>
-                {
-                    b.HasOne("WebApi.Entities.Permission", "Permission")
-                        .WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WebApi.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Permission");
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("WebApi.Entities.User", b =>

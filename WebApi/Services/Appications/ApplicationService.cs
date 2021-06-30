@@ -29,9 +29,15 @@ namespace WebApi.Services.Appications
                 .FirstOrDefaultAsync(e => e.Id == Id);
         }
 
-        public async Task<ApplicationResponse> CreateApplication(Application Application)
+        public async Task<ApplicationResponse> CreateApplication(ApplicationRequest request)
         {
-            ApplicationResponse response = new ApplicationResponse();
+            var response = new ApplicationResponse();
+            var Application = new Application();
+            Application.AppName_si = request.AppName_si;
+            Application.AppName_ta = request.AppName_ta;
+            Application.AppName_en = request.AppName_en;
+            Application.AppType = request.AppType;
+
             Application.AppSecret = await GenerateAppSecert();
             await _context.Applications.AddAsync(Application);
             await _context.SaveChangesAsync();
@@ -41,15 +47,16 @@ namespace WebApi.Services.Appications
             return response;
         }
 
-        public async Task<ApplicationResponse> UpdateApplication(Application Application)
+        public async Task<ApplicationResponse> UpdateApplication(int id,ApplicationRequest request)
         {
-            ApplicationResponse response = new ApplicationResponse();
-            var result = await _context.Applications.FirstOrDefaultAsync(e => e.Id == Application.Id);
+            var response = new ApplicationResponse();
+            var result = await _context.Applications.FirstOrDefaultAsync(e => e.Id == id);
             if (result != null)
             {
-                result.AppName_si = Application.AppName_si;
-                result.AppName_ta = Application.AppName_ta;
-                result.AppName_en = Application.AppName_en;
+                result.AppName_si = request.AppName_si;
+                result.AppName_ta = request.AppName_ta;
+                result.AppName_en = request.AppName_en;
+                result.AppType = request.AppType;
 
                 await _context.SaveChangesAsync();
                 response.Message = "Application Update Success";
@@ -109,5 +116,6 @@ namespace WebApi.Services.Appications
             }
             return secret;
         }
+
     }
 }

@@ -17,11 +17,9 @@ using System.Text;
 using System.Threading.Tasks;
 using WebApi.App;
 using WebApi.Authorization;
-using WebApi.Services;
 using WebApi.Services.Appications;
-using WebApi.Services.AppRoles;
+using WebApi.Services.ApplicationUsers;
 using WebApi.Services.Auth;
-using WebApi.Services.Roles;
 using WebApi.Services.Users;
 
 namespace WebApi
@@ -49,8 +47,7 @@ namespace WebApi
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IApplicationService, ApplicationService>();
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IAppRoleService, AppRoleService>();
+            services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
 
             //Adding Authentication
@@ -83,8 +80,8 @@ namespace WebApi
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "Election Commission",
-                    Description = "Election Commission Master Web API"
+                    Title = "Authenticate API",
+                    Description = "Code-Js Authenticate Master"
                 });
                 // To Enable authorization using Swagger (JWT)    
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -120,7 +117,7 @@ namespace WebApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Authenticate Api v1.0"));
             }
 
             app.UseHttpsRedirection();

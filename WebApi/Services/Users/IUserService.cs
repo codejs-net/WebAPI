@@ -10,10 +10,13 @@ namespace WebApi.Services.Users
 {
     public interface IUserService
     {
-        Task<IEnumerable<UserGetResponse>> GetUsers(string AppSecrat);
         Task<User> GetUser(int Id);
         Task<UserResponse> CreateUser(UserRequest UserRequest);
-        Task<User> UpdateUser(User User);
+        Task<UserResponse> UpdateUser(UserRequest request, int userid);
         Task<User> DeleteUser(int Id);
+        Task<bool> UserExists(string username);
+        Task<bool> EmailExists(string email);
+        Task<bool> IdCardExists(string idCard);
+        Task<bool> MobileExists(string mobile);
     }
 }

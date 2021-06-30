@@ -8,6 +8,7 @@ namespace WebApi.Entities
     public class Application
     {
         public int Id { get; set; }
+        public string AppType { get; set; } = "Private";
         public string AppName_si { get; set; }
         public string AppName_ta { get; set; }
         public string AppName_en { get; set; }

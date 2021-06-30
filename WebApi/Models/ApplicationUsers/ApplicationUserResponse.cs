@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Entities;
-using WebApi.Models.Validation;
 
-namespace WebApi.Models.Users
+namespace WebApi.Models.ApplicationUsers
 {
-    public class UserResponse
-    {  
+    public class ApplicationUserResponse
+    {
         public bool Success { get; set; } = true;
         public string Message { get; set; } = null;
-        public User Data { get; set; }
+        public ApplicationUser Data { get; set; }
     }
 }
